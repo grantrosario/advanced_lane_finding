@@ -20,25 +20,16 @@ MARGIN = 100
 
 w,h = 1280,720
 x,y = 0.5*w, 0.8*h
-bottom_left = [1100./1280*w,720./720*h]
-bottom_right = [835./1280*w,547./720*h]
-top_left = [200./1280*w,720./720*h]
-top_right = [453./1280*w,547./720*h]
 
-sq_top_left = [(w-x)/2.,h]
-sq_top_right = [(w-x)/2.,0.82*h]
-sq_bottom_left = [(w+x)/2.,h]
-sq_bottom_right = [(w+x)/2.,0.82*h]
+src = np.float32([[200./1280*w,720./720*h],
+                  [453./1280*w,547./720*h],
+                  [835./1280*w,547./720*h],
+                  [1100./1280*w,720./720*h]])
 
-src = np.float32([top_left,
-                  top_right,
-                  bottom_right,
-                  bottom_left])
-
-dst = np.float32([sq_top_left,
-                  sq_top_right,
-                  sq_bottom_right,
-                  sq_bottom_left])
+dst = np.float32([[(w-x)/2.,h],
+                  [(w-x)/2.,0.82*h],
+                  [(w+x)/2.,0.82*h],
+                  [(w+x)/2.,h]])
 
 
 ##############################################

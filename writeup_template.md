@@ -19,9 +19,9 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
+[image1]: output_images/calibration_img.png "Undistorted"
+[image2]: output_images/undistort_street.png "Road Transformed"
+[image3]: output_images/binary.png "Road Binary"
 [image4]: ./examples/warped_straight_lines.jpg "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
@@ -43,7 +43,7 @@ You're reading it!
 
 #### 1. Description
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in the second code cell of the IPython notebook located in "advanced\_lane\_finding.ipynb" (or in lines 44 through 71 of the file called `alf.py`).  
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
@@ -53,42 +53,45 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 ### Pipeline (single images)
 
-#### 1. Provide an example of a distortion-corrected image.
+#### 1. Undistort
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+The first step in the pipeline is to undistort the test image as seen below: 
+
 ![alt text][image2]
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+#### 2. Create thresholded binary image
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+I decided to avoid using gradients since they do not handle shadows well. Instead, I used a combination of color thresholds to generate a binary image (thresholding steps at lines 73 through 145 in `alf.py`). Specifically, I utilized the rgb color set to focus on yellow lines and the L channel in the HLS color set to focus on white lines. Here's an example of my output for this step.
 
 ![alt text][image3]
 
-#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+#### 3. Perspective Transform
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The code for my perspective transform includes a function called `transform()`, which appears in lines 150 through 159 in the file `alf.py` (or in the 4th code cell of the IPython notebook).  The `transform()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
 
 ```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
+w,h = 1280,720
+x,y = 0.5*w, 0.8*h
+
+src = np.float32([[200./1280*w,720./720*h],
+                  [453./1280*w,547./720*h],
+                  [835./1280*w,547./720*h],
+                  [1100./1280*w,720./720*h]])
+                  
+dst = np.float32([[(w-x)/2.,h],
+                  [(w-x)/2.,0.82*h],
+                  [(w+x)/2.,0.82*h],
+                  [(w+x)/2.,h]])
 ```
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 200, 720      | 320, 720        | 
+| 453, 547      | 320, 590.40002441      |
+| 835, 547     | 960, 590.40002441      |
+| 1100, 720      | 960, 720       |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
