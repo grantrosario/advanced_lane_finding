@@ -143,10 +143,10 @@ def createBinary(img):
     combined_binary[(l_binary == 1) | (rg_binary == 1)] = 1
 
     # f, (ax1, ax2) = plt.subplots(1, 2, figsize=(20,10))
-    # ax1.set_title('Undistorted')
+    # ax1.set_title('Distorted')
     # ax1.imshow(undist)
     #
-    # ax2.set_title('Binary')
+    # ax2.set_title('Undistorted')
     # ax2.imshow(combined_binary, cmap='gray')
     # plt.show()
     return (combined_binary)
@@ -370,16 +370,16 @@ def measureCurveAndDist(binary_img, left_fit, right_fit, left_lane_inds, right_l
         plt.imshow(binary_img)
         plt.show()
 
-    # # Distance from center is image x midpoint - mean of left_fit and right_fit intercepts
-    # if right_fit is not None and left_fit is not None:
-    #     car_position = binary_img.shape[1]/2
-    #     l_fit_x_int = left_fit[0]*h**2 + left_fit[1]*h + left_fit[2]
-    #     r_fit_x_int = right_fit[0]*h**2 + right_fit[1]*h + right_fit[2]
-    #     lane_center_position = (r_fit_x_int + l_fit_x_int) /2
-    #     center_dist = (car_position - lane_center_position) * xm_per_pix
-    #     if center_dist > 1:
-    #         plt.imshow(binary_img)
-    #         plt.show()
+    # Distance from center is image x midpoint - mean of left_fit and right_fit intercepts
+    if right_fit is not None and left_fit is not None:
+        car_position = binary_img.shape[1]/2
+        l_fit_x_int = left_fit[0]*h**2 + left_fit[1]*h + left_fit[2]
+        r_fit_x_int = right_fit[0]*h**2 + right_fit[1]*h + right_fit[2]
+        lane_center_position = (r_fit_x_int + l_fit_x_int) /2
+        center_dist = (car_position - lane_center_position) * xm_per_pix
+        if center_dist > 1:
+            plt.imshow(binary_img)
+            plt.show()
 
     return (left_curverad, right_curverad, center_dist)
 
@@ -540,7 +540,9 @@ first_clip.write_videofile(vid_output, audio=False)
 
 # base_img = mpimage.imread("test_images/test5.jpg")
 # binary = createBinary(base_img)
-# warped, M, Minv = transform(binary, src, dst)
+# warped, M, Minv = transform(warped, src, dst)
+
+
 
 #
 #
