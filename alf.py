@@ -70,13 +70,6 @@ for fname in images:
         drawn_img = cv2.drawChessboardCorners(img, (9,6), corners, ret)
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
-
-##############################################
-##############################################
-def undistort(img, mtx, dist):
-    undist = cv2.undistort(img, mtx, dist, None, mtx)
-    return undist
-
 ##############################################
 ############ CREATE BINARY IMAGE #############
 def createBinary(img):
@@ -279,8 +272,8 @@ def laneHistogramDetection(warped):
     return (left_fit, right_fit, left_lane_inds, right_lane_inds, visualization_data)
 
 
-    ##############################################
-    ########### IF ALREADY FOUND #################
+##############################################
+########### USING FOUND LINES ################
 def laneHistogramSkipWindows(warped, left_fit, right_fit):
     nonzero = warped.nonzero()
     nonzeroy = np.array(nonzero[0])
@@ -387,7 +380,7 @@ def measureCurveAndDist(binary_img, left_fit, right_fit, left_lane_inds, right_l
 ##############################################
 
 ##############################################
-############### DRAW LINES ###################
+############### DRAW LANE ####################
 def drawLines(img, bin_warped, left_fit, right_fit, Minv):
     new_img = np.copy(img)
     if left_fit is None or right_fit is None:
