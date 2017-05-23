@@ -1,3 +1,5 @@
+# BEGIN RESTRUCTURING FOR DEEP LEARNING IMPLEMENTATION
+
 import numpy as np
 import cv2
 import glob
